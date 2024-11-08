@@ -35,7 +35,7 @@ export default function RootLayout({
       </head>
       <body className={publicSans.className}>
         <div className="flex flex-col p-4 md:p-12 h-[100vh]">
-          <Navbar></Navbar>
+          <Navbar />
           {children}
         </div>
       </body>

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import type { EndpointsContext } from "./agent";
-import { useActions } from "./utils/client";
 import { LocalContext } from "./shared";
+import { useActions } from "./utils/client";
 
 export default function GenerativeUIPage() {
   const actions = useActions<typeof EndpointsContext>();
@@ -34,7 +34,7 @@ export default function GenerativeUIPage() {
     // consume the value stream to obtain the final string value
     // after which we can append to our chat history state
     (async () => {
-      let lastEvent = await element.lastEvent;
+      const lastEvent = await element.lastEvent;
       if (typeof lastEvent === "string") {
         setHistory((prev) => [
           ...prev,
@@ -61,15 +61,23 @@ export default function GenerativeUIPage() {
             <span className="ml-2">
               This template showcases how to render React components right from
               a{" "}
-              <a href="https://js.langchain.com/" target="_blank">
+              <a
+                href="https://js.langchain.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
                 LangChain.js
               </a>{" "}
               chain and the Vercel{" "}
-              <a href="https://sdk.vercel.ai/docs" target="_blank">
+              <a
+                href="https://sdk.vercel.ai/docs"
+                target="_blank"
+                rel="noreferrer"
+              >
                 AI SDK
               </a>{" "}
               in a{" "}
-              <a href="https://nextjs.org/" target="_blank">
+              <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
                 Next.js
               </a>{" "}
               project.

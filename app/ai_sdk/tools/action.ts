@@ -1,12 +1,12 @@
 "use server";
 
-import { ChatOpenAI } from "@langchain/openai";
+import { JsonOutputKeyToolsParser } from "@langchain/core/output_parsers/openai_tools";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import type { Runnable } from "@langchain/core/runnables";
+import { ChatOpenAI } from "@langchain/openai";
 import { createStreamableValue } from "ai/rsc";
 import { z } from "zod";
-import { Runnable } from "@langchain/core/runnables";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { JsonOutputKeyToolsParser } from "@langchain/core/output_parsers/openai_tools";
 
 const Weather = z
   .object({
@@ -30,7 +30,7 @@ export async function executeTool(
     const prompt = ChatPromptTemplate.fromMessages([
       [
         "system",
-        `You are a helpful assistant. Use the tools provided to best assist the user.`,
+        "You are a helpful assistant. Use the tools provided to best assist the user.",
       ],
       ["human", "{input}"],
     ]);

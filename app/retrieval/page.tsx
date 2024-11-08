@@ -11,23 +11,30 @@ export default function AgentsPage() {
           🔗
           <span className="ml-2">
             This template showcases how to perform retrieval with a{" "}
-            <a href="https://js.langchain.com/" target="_blank">
+            <a
+              href="https://js.langchain.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
               LangChain.js
             </a>{" "}
             chain and the Vercel{" "}
-            <a href="https://sdk.vercel.ai/docs" target="_blank">
+            <a
+              href="https://sdk.vercel.ai/docs"
+              target="_blank"
+              rel="noreferrer"
+            >
               AI SDK
             </a>{" "}
             in a{" "}
-            <a href="https://nextjs.org/" target="_blank">
+            <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
               Next.js
             </a>{" "}
             project.
           </span>
         </li>
         <li className="hidden text-l md:block">
-          🪜
-          <span className="ml-2">The chain works in two steps:</span>
+          🪜<span className="ml-2">The chain works in two steps:</span>
           <ul>
             <li className="ml-4">
               1️⃣
@@ -75,6 +82,7 @@ export default function AgentsPage() {
             <a
               href="https://github.com/langchain-ai/langchain-nextjs-template"
               target="_blank"
+              rel="noreferrer"
             >
               from the GitHub repo
             </a>
@@ -108,6 +116,6 @@ export default function AgentsPage() {
       }
       emoji="🐶"
       titleText="Dana the Document-Retrieving Dog"
-    ></ChatWindow>
+    />
   );
 }

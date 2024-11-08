@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useContext } from "react";
+import { type ReactNode, useContext } from "react";
 import { createContext } from "react";
 
 const ActionsContext = createContext<any>(null);

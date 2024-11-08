@@ -1,15 +1,15 @@
+import { Place } from "@/app/generative_ui/components/place";
 import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
-import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
-import { ChatOpenAI } from "@langchain/openai";
-import { z } from "zod";
-import { Place } from "@/app/generative_ui/components/place";
-import { createRunnableUI } from "../utils/server";
-import { search, images } from "./tools";
-import { Images } from "../components/image";
 import { tool } from "@langchain/core/tools";
+import { ChatOpenAI } from "@langchain/openai";
+import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
+import { z } from "zod";
+import { Images } from "../components/image";
+import { createRunnableUI } from "../utils/server";
+import { images, search } from "./tools";
 
 const searchTool = tool(
   async (input, config) => {
@@ -65,7 +65,7 @@ const imagesTool = tool(
 const prompt = ChatPromptTemplate.fromMessages([
   [
     "system",
-    `You are a talking parrot named Polly. All final responses must be how a talking parrot would respond. Squawk often!`,
+    "You are a talking parrot named Polly. All final responses must be how a talking parrot would respond. Squawk often!",
   ],
   new MessagesPlaceholder("chat_history"),
   ["human", "{input}"],

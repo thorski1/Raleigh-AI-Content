@@ -11,15 +11,23 @@ export default function Home() {
           🤝
           <span className="ml-2">
             This template showcases a simple chatbot using{" "}
-            <a href="https://js.langchain.com/" target="_blank">
+            <a
+              href="https://js.langchain.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
               LangChain.js
             </a>{" "}
             and the Vercel{" "}
-            <a href="https://sdk.vercel.ai/docs" target="_blank">
+            <a
+              href="https://sdk.vercel.ai/docs"
+              target="_blank"
+              rel="noreferrer"
+            >
               AI SDK
             </a>{" "}
             in a{" "}
-            <a href="https://nextjs.org/" target="_blank">
+            <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
               Next.js
             </a>{" "}
             project.
@@ -53,6 +61,7 @@ export default function Home() {
             <a
               href="https://github.com/langchain-ai/langchain-nextjs-template"
               target="_blank"
+              rel="noreferrer"
             >
               from the GitHub repo
             </a>
@@ -75,6 +84,6 @@ export default function Home() {
       titleText="Patchy the Chatty Pirate"
       placeholder="I'm an LLM pretending to be a pirate! Ask me about the pirate life!"
       emptyStateComponent={InfoCard}
-    ></ChatWindow>
+    />
   );
 }

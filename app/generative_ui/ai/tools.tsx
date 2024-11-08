@@ -90,29 +90,31 @@ export async function search(input: { query: string }) {
   if (answer_box) {
     if (answer_box.result) {
       return answer_box.result;
-    } else if (answer_box.answer) {
-      return answer_box.answer;
-    } else if (answer_box.snippet) {
-      return answer_box.snippet;
-    } else if (answer_box.snippet_highlighted_words) {
-      return answer_box.snippet_highlighted_words.toString();
-    } else {
-      const answer: { [key: string]: string } = {};
-      Object.keys(answer_box)
-        .filter(
-          (k) =>
-            !Array.isArray(answer_box[k]) &&
-            typeof answer_box[k] !== "object" &&
-            !(
-              typeof answer_box[k] === "string" &&
-              answer_box[k].startsWith("http")
-            ),
-        )
-        .forEach((k) => {
-          answer[k] = answer_box[k];
-        });
-      return JSON.stringify(answer);
     }
+    if (answer_box.answer) {
+      return answer_box.answer;
+    }
+    if (answer_box.snippet) {
+      return answer_box.snippet;
+    }
+    if (answer_box.snippet_highlighted_words) {
+      return answer_box.snippet_highlighted_words.toString();
+    }
+    const answer: { [key: string]: string } = {};
+    Object.keys(answer_box)
+      .filter(
+        (k) =>
+          !Array.isArray(answer_box[k]) &&
+          typeof answer_box[k] !== "object" &&
+          !(
+            typeof answer_box[k] === "string" &&
+            answer_box[k].startsWith("http")
+          ),
+      )
+      .forEach((k) => {
+        answer[k] = answer_box[k];
+      });
+    return JSON.stringify(answer);
   }
 
   if (res.events_results) {
@@ -154,11 +156,11 @@ export async function search(input: { query: string }) {
     return JSON.stringify(sights);
   }
 
-  if (res.shopping_results && res.shopping_results[0]?.title) {
+  if (res.shopping_results?.[0]?.title) {
     return JSON.stringify(res.shopping_results.slice(0, 3));
   }
 
-  if (res.images_results && res.images_results[0]?.thumbnail) {
+  if (res.images_results?.[0]?.thumbnail) {
     return res.images_results
       .map((ir: { thumbnail: string }) => ir.thumbnail)
       .slice(0, 10)
@@ -212,7 +214,6 @@ export async function search(input: { query: string }) {
 
   if (snippets.length > 0) {
     return JSON.stringify(snippets);
-  } else {
-    return "No good search result found";
   }
+  return "No good search result found";
 }

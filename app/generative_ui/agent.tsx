@@ -1,8 +1,8 @@
 import "server-only";
 
+import { ChatMessage } from "@langchain/core/messages";
 import { agentExecutor } from "./ai/chain";
 import { exposeEndpoints, streamRunnableUI } from "./utils/server";
-import { ChatMessage } from "@langchain/core/messages";
 
 async function agent(inputs: {
   input: string;

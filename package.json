@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write \"app\""
+    "format": "prettier --write \"app\"",
+    "biome": "biome check .",
+    "biome:format": "biome format . --write",
+    "prepare": "husky install"
   },
   "engines": {
     "node": ">=18"
@@ -38,7 +41,9 @@
     "zod-to-json-schema": "^3.21.4"
   },
   "devDependencies": {
-    "prettier": "3.0.0"
+    "@biomejs/biome": "^1.9.4",
+    "prettier": "3.0.0",
+    "husky": "^8.0.0"
   },
-  "packageManager": "yarn@3.5.1"
+  "packageManager": "pnpm@9.1.0"
 }

@@ -11,15 +11,23 @@ export default function AgentsPage() {
           🧱
           <span className="ml-2">
             This template showcases how to output structured responses with a{" "}
-            <a href="https://js.langchain.com/" target="_blank">
+            <a
+              href="https://js.langchain.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
               LangChain.js
             </a>{" "}
             chain and the Vercel{" "}
-            <a href="https://sdk.vercel.ai/docs" target="_blank">
+            <a
+              href="https://sdk.vercel.ai/docs"
+              target="_blank"
+              rel="noreferrer"
+            >
               AI SDK
             </a>{" "}
             in a{" "}
-            <a href="https://nextjs.org/" target="_blank">
+            <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
               Next.js
             </a>{" "}
             project.
@@ -53,7 +61,7 @@ export default function AgentsPage() {
           💎
           <span className="ml-2">
             It uses a lightweight, convenient, and powerful{" "}
-            <a href="https://zod.dev/" target="_blank">
+            <a href="https://zod.dev/" target="_blank" rel="noreferrer">
               schema validation library called Zod
             </a>{" "}
             to define schemas, but you can initialize the chain with JSON schema
@@ -75,6 +83,7 @@ export default function AgentsPage() {
             <a
               href="https://github.com/langchain-ai/langchain-nextjs-template"
               target="_blank"
+              rel="noreferrer"
             >
               from the GitHub repo
             </a>
@@ -97,6 +106,6 @@ export default function AgentsPage() {
       placeholder={`No matter what you type here, I'll always return the same JSON object with the same structure!`}
       emoji="🧱"
       titleText="Structured Output"
-    ></ChatWindow>
+    />
   );
 }

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import type { StreamEvent } from "@langchain/core/tracers/log_stream";
 import { readStreamableValue } from "ai/rsc";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { runAgent } from "./action";
-import { StreamEvent } from "@langchain/core/tracers/log_stream";
 
 export default function Page() {
   const [input, setInput] = useState("");

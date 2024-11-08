@@ -1,17 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { Message as VercelChatMessage, StreamingTextResponse } from "ai";
+import { StreamingTextResponse, type Message as VercelChatMessage } from "ai";
+import { type NextRequest, NextResponse } from "next/server";
 
 import { createClient } from "@supabase/supabase-js";
 
-import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
-import { PromptTemplate } from "@langchain/core/prompts";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
-import { Document } from "@langchain/core/documents";
-import { RunnableSequence } from "@langchain/core/runnables";
+import type { Document } from "@langchain/core/documents";
 import {
   BytesOutputParser,
   StringOutputParser,
 } from "@langchain/core/output_parsers";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { RunnableSequence } from "@langchain/core/runnables";
+import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
 
 export const runtime = "edge";
 
@@ -24,11 +24,11 @@ const formatVercelMessages = (chatHistory: VercelChatMessage[]) => {
   const formattedDialogueTurns = chatHistory.map((message) => {
     if (message.role === "user") {
       return `Human: ${message.content}`;
-    } else if (message.role === "assistant") {
-      return `Assistant: ${message.content}`;
-    } else {
-      return `${message.role}: ${message.content}`;
     }
+    if (message.role === "assistant") {
+      return `Assistant: ${message.content}`;
+    }
+    return `${message.role}: ${message.content}`;
   });
   return formattedDialogueTurns.join("\n");
 };
@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
       JSON.stringify(
         documents.map((doc) => {
           return {
-            pageContent: doc.pageContent.slice(0, 50) + "...",
+            pageContent: `${doc.pageContent.slice(0, 50)}...`,
             metadata: doc.metadata,
           };
         }),

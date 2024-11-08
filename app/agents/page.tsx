@@ -11,15 +11,23 @@ export default function AgentsPage() {
           🤝
           <span className="ml-2">
             This template showcases a{" "}
-            <a href="https://js.langchain.com/" target="_blank">
+            <a
+              href="https://js.langchain.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
               LangChain.js
             </a>{" "}
             agent and the Vercel{" "}
-            <a href="https://sdk.vercel.ai/docs" target="_blank">
+            <a
+              href="https://sdk.vercel.ai/docs"
+              target="_blank"
+              rel="noreferrer"
+            >
               AI SDK
             </a>{" "}
             in a{" "}
-            <a href="https://nextjs.org/" target="_blank">
+            <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
               Next.js
             </a>{" "}
             project.
@@ -60,6 +68,7 @@ export default function AgentsPage() {
             <a
               href="https://github.com/langchain-ai/langchain-nextjs-template"
               target="_blank"
+              rel="noreferrer"
             >
               from the GitHub repo
             </a>
@@ -83,6 +92,6 @@ export default function AgentsPage() {
       titleText="Polly the Agentic Parrot"
       emoji="🦜"
       showIntermediateStepsToggle={true}
-    ></ChatWindow>
+    />
   );
 }
