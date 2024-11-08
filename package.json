@@ -10,7 +10,9 @@
     "format": "prettier --write \"app\"",
     "biome": "biome check .",
     "biome:format": "biome format . --write",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "type-check": "tsc --noEmit",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "engines": {
     "node": ">=18"

@@ -1,4 +1,4 @@
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";

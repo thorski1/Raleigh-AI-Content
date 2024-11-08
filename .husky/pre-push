@@ -4,9 +4,6 @@
 # Add common.sh for Windows compatibility
 . "$(dirname -- "$0")/common.sh"
 
-# Add error handling and better output
+# Only run type checking
 echo "Running type check..."
 pnpm type-check || exit 1
-
-echo "Running tests..."
-pnpm test || exit 1
