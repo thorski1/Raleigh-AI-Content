@@ -1,4 +1,12 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm type-check && pnpm test
+# Add common.sh for Windows compatibility
+. "$(dirname -- "$0")/common.sh"
+
+# Add error handling and better output
+echo "Running type check..."
+pnpm type-check || exit 1
+
+echo "Running tests..."
+pnpm test || exit 1

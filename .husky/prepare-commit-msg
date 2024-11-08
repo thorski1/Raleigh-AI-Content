@@ -1,4 +1,48 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-exec < /dev/tty && echo "[BRANCH_NAME_PREFIX] " > 
+# Add common.sh for Windows compatibility
+. "$(dirname -- "$0")/common.sh"
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+# Get the current branch name
+BRANCH_NAME=$(git branch --show-current)
+BRANCH_PREFIX=$(echo "$BRANCH_NAME" | grep -o '^[^/]*')
+
+# Skip for merge commits
+if [ "$COMMIT_SOURCE" = "merge" ]; then
+    exit 0
+fi
+
+# Read the current commit message
+CURRENT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Skip if message is empty or starts with "Merge"
+if [ -z "$CURRENT_MSG" ] || echo "$CURRENT_MSG" | grep -q "^Merge"; then
+    exit 0
+fi
+
+# Define valid types
+VALID_TYPES="feat|fix|docs|chore|style|refactor|ci|test|revert|perf"
+
+# Check if message already has the correct format
+if echo "$CURRENT_MSG" | grep -Eq "^\[$BRANCH_PREFIX\] ($VALID_TYPES)(\([^)]+\))?: .+$"; then
+    exit 0
+fi
+
+# Check if it's a conventional commit without branch prefix
+if echo "$CURRENT_MSG" | grep -Eq "^($VALID_TYPES)(\([^)]+\))?: .+$"; then
+    # Add branch prefix
+    echo "[$BRANCH_PREFIX] $CURRENT_MSG" > "$COMMIT_MSG_FILE"
+    exit 0
+fi
+
+# If we get here, the format is invalid
+echo "Error: Invalid commit message format"
+echo "Commit message must be in format: [branch] type(scope?): subject"
+echo "Valid types: feat, fix, docs, chore, style, refactor, ci, test, revert, perf"
+echo "Example: [main] feat(auth): add login functionality"
+echo "Or just type: feat(auth): add login functionality (branch prefix will be added automatically)"
+exit 1

@@ -1,4 +1,40 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm commitlint --edit 
+# Add common.sh for Windows compatibility
+. "$(dirname -- "$0")/common.sh"
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Define valid types
+VALID_TYPES="feat|fix|docs|chore|style|refactor|ci|test|revert|perf"
+
+# Skip for merge commits
+if echo "$COMMIT_MSG" | grep -q "^Merge"; then
+    exit 0
+fi
+
+# Validate commit message format
+if ! echo "$COMMIT_MSG" | grep -Eq "^\[(.*?)\] ($VALID_TYPES)(\([^)]+\))?: .+$"; then
+    echo "Error: Invalid commit message format"
+    echo "Commit message must be in format: [branch] type(scope?): subject"
+    echo "Valid types: feat, fix, docs, chore, style, refactor, ci, test, revert, perf"
+    echo "Example: [main] feat(auth): add login functionality"
+    exit 1
+fi
+
+# Validate max length (100 characters)
+if [ ${#COMMIT_MSG} -gt 100 ]; then
+    echo "Error: Commit message is too long (max 100 characters)"
+    exit 1
+fi
+
+# Validate case (shouldn't start with uppercase after the type)
+MESSAGE_SUBJECT=$(echo "$COMMIT_MSG" | sed 's/.*]: [^:]*: \(.*\)/\1/')
+if echo "$MESSAGE_SUBJECT" | grep -q '^[A-Z]'; then
+    echo "Error: Commit message subject should not start with an uppercase letter"
+    exit 1
+fi
+
+exit 0
