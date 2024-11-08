@@ -13,7 +13,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>LangChain + Next.js Template</title>
+        <title>LangChain + Next.js Template yayyyy</title>
         <link rel="shortcut icon" href="/images/favicon.ico" />
         <meta
           name="description"
