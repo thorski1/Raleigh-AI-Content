@@ -18,12 +18,14 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@langchain/community": "^0.3.11",
+    "@clerk/nextjs": "^6.3.0",
+    "@langchain/community": "^0.3.12",
     "@langchain/core": "^0.3.17",
     "@langchain/langgraph": "^0.2.20",
-    "@langchain/openai": "^0.3.11",
+    "@langchain/openai": "^0.3.12",
     "@next/bundle-analyzer": "^13.4.19",
-    "@supabase/supabase-js": "^2.32.0",
+    "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.46.1",
     "@types/node": "20.12.12",
     "@types/react": "18.3.2",
     "@types/react-dom": "18.3.0",
@@ -44,8 +46,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "prettier": "3.0.0",
-    "husky": "^8.0.0"
+    "husky": "^8.0.0",
+    "prettier": "3.0.0"
   },
   "packageManager": "pnpm@9.1.0"
 }
