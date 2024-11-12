@@ -11,81 +11,22 @@ Key aspects of this setup:
 - We create and export base utilities that will be used throughout our tRPC implementation
 - We use React's cache function to ensure consistent context across server components
 
-/trpc/init.ts
+/package.json
 
-```ts
-import { initTRPC } from '@trpc/server';
-import { cache } from 'react';
-import superjson from 'superjson';
-import { appRouter } from './routers/_app';
-
-export const createTRPCContext = cache(async () => {
-  /**
-   * @see: https://trpc.io/docs/server/context
-   */
-  return { userId: 'user_123' };
-});
-// Avoid exporting the entire t-object
-// since it's not very descriptive.
-// For instance, the use of a t variable
-// is common in i18n libraries.
-const t = initTRPC.context<typeof createTRPCContext>().create({
-  /**
-   * @see https://trpc.io/docs/server/data-transformers
-   */
-  transformer: superjson,
-});
-
-// Base router and procedure helpers
-export const createTRPCRouter = t.router;
-export const baseProcedure = t.procedure;
-
-// Add this new export
-export const createCallerFactory = t.createCallerFactory;
+```json
+"@trpc/client": "11.0.0-rc.532",
+"@trpc/next": "^11.0.0-rc.532",
+"@trpc/react-query": "11.0.0-rc.532",
+"@trpc/server": "11.0.0-rc.532",
+"@tanstack/react-query": "^5.56.2",
+"superjson": "^2.2.1"
 ```
+
+/trpc/init.ts
+[https://github.com/thorski1/Raleigh-AI-Content/blob/089a8e7be3ab370d05c3aa4a7cf0de91a73c0f43/trpc/init.ts](init.ts)
 
 /trpc/query-client.ts
-
-```ts
-'use client'; // <-- to make sure we can mount the Provider from a server component
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
-import { createTRPCReact } from '@trpc/react-query';
-import { useState } from 'react';
-import { makeQueryClient } from './query-client';
-import type { AppRouter } from './routers/_app';
-import superjson from 'superjson';
-
-export const trpc = createTRPCReact<AppRouter>();
-
-function getUrl() {
-  if (typeof window !== 'undefined') return '';
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return 'http://localhost:3000';
-}
-
-export function TRPCProvider(props: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      links: [
-        httpBatchLink({
-          url: `${getUrl()}/api/trpc`,
-          transformer: superjson,
-        }),
-      ],
-    })
-  );
-
-  return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        {props.children}
-      </QueryClientProvider>
-    </trpc.Provider>
-  );
-}
-```
+[https://github.com/thorski1/Raleigh-AI-Content/blob/089a8e7be3ab370d05c3aa4a7cf0de91a73c0f43/trpc/query-client.ts](query-client.ts)
 
 This file sets up the React Query client with tRPC:
 
@@ -97,25 +38,7 @@ This file sets up the React Query client with tRPC:
 ## 3. Server-Side tRPC Setup
 
 /trpc/server.tsx
-
-```ts
-import 'server-only'; // <-- ensure this file cannot be imported from the client
-import { createHydrationHelpers } from '@trpc/react-query/rsc';
-import { cache } from 'react';
-import { createTRPCContext, createCallerFactory } from './init';
-import { makeQueryClient } from './query-client';
-import { appRouter } from './routers/_app';
-// IMPORTANT: Create a stable getter for the query client that
-//            will return the same client during the same request.
-export const getQueryClient = cache(makeQueryClient);
-
-const caller = createCallerFactory(appRouter)(createTRPCContext);
-
-export const { trpc, HydrateClient } = createHydrationHelpers<typeof appRouter>(
-  caller,
-  getQueryClient,
-);
-```
+[https://github.com/thorski1/Raleigh-AI-Content/blob/089a8e7be3ab370d05c3aa4a7cf0de91a73c0f43/trpc/server.tsx](server.tsx)
 
 This file sets up tRPC for server-side usage in Next.js:
 
@@ -128,47 +51,7 @@ This file sets up tRPC for server-side usage in Next.js:
 ## 4. Client-Side tRPC Setup
 
 /trpc/client.tsx
-
-```ts
-'use client'; // <-- to make sure we can mount the Provider from a server component
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
-import { createTRPCReact } from '@trpc/react-query';
-import { useState } from 'react';
-import { makeQueryClient } from './query-client';
-import type { AppRouter } from './routers/_app';
-import superjson from 'superjson';
-
-export const trpc = createTRPCReact<AppRouter>();
-
-function getUrl() {
-  if (typeof window !== 'undefined') return '';
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return 'http://localhost:3000';
-}
-
-export function TRPCProvider(props: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      links: [
-        httpBatchLink({
-          url: `${getUrl()}/api/trpc`,
-          transformer: superjson,
-        }),
-      ],
-    })
-  );
-
-  return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        {props.children}
-      </QueryClientProvider>
-    </trpc.Provider>
-  );
-}
-```
+[https://github.com/thorski1/Raleigh-AI-Content/blob/089a8e7be3ab370d05c3aa4a7cf0de91a73c0f43/trpc/client.tsx](client.tsx)
 
 This file sets up the client-side tRPC configuration:
 
@@ -181,17 +64,7 @@ This file sets up the client-side tRPC configuration:
 ## 5. Defining the App Router
 
 /trpc/routers/\_app.ts
-
-```ts
-import { createTRPCRouter } from "../init";
-import { chatAction } from "./chat";
-
-export const appRouter = createTRPCRouter({
-  chatAction,
-});
-
-export type AppRouter = typeof appRouter;
-```
+[https://github.com/thorski1/Raleigh-AI-Content/blob/089a8e7be3ab370d05c3aa4a7cf0de91a73c0f43/trpc/routers/_app.ts](_app.ts)
 
 This file defines the main tRPC router:
 
@@ -202,19 +75,7 @@ This file defines the main tRPC router:
 ## 6. Implementing a Chat Action
 
 /trpc/routers/chat.ts
-
-```ts
-import { baseProcedure } from "../init";
-import { z } from "zod";
-
-export const chatAction = baseProcedure
-  .input(z.object({
-    message: z.string(),
-  }),
-).mutation(async ({ input, ctx }: { input: any; ctx: any }) => {
-    return { message: input.message };
-  });
-```
+[https://github.com/thorski1/Raleigh-AI-Content/blob/089a8e7be3ab370d05c3aa4a7cf0de91a73c0f43/trpc/routers/chat.ts](chat.ts)
 
 This file defines a specific tRPC procedure for chat actions:
 
@@ -227,21 +88,7 @@ This file defines a specific tRPC procedure for chat actions:
 
 /app/api/trpc/[trpc].ts
 
-```ts
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { appRouter } from '@/trpc/routers/_app';
-import { createTRPCContext } from '@/trpc/init';
-
-const handler = (req: Request) =>
-  fetchRequestHandler({
-    endpoint: '/api/trpc',
-    req,
-    router: appRouter,
-    createContext: createTRPCContext,
-  });
-
-export { handler as GET, handler as POST };
-```
+[https://github.com/thorski1/Raleigh-AI-Content/blob/089a8e7be3ab370d05c3aa4a7cf0de91a73c0f43/app/api/%5Btrpc%5D/route.ts](route.ts)
 
 This file sets up the API route for tRPC in Next.js:
 
