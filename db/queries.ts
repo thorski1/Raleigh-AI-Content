@@ -1,16 +1,17 @@
-import { db } from "./index";
 import { sql } from "drizzle-orm";
-import { documents } from "./schema";
 import { and } from "drizzle-orm";
+import { db } from "./index";
+import { documents } from "./schema";
 
 // Define similarity operators
 export const SimilarityOperator = {
-  Cosine: '<=>',      // Cosine distance (most common)
-  L2: '<->',          // Euclidean distance
-  InnerProduct: '<#>' // Negative inner product (dot product)
+  Cosine: "<=>", // Cosine distance (most common)
+  L2: "<->", // Euclidean distance
+  InnerProduct: "<#>", // Negative inner product (dot product)
 } as const;
 
-type SimilarityOperatorType = typeof SimilarityOperator[keyof typeof SimilarityOperator];
+type SimilarityOperatorType =
+  (typeof SimilarityOperator)[keyof typeof SimilarityOperator];
 
 interface VectorSearchOptions {
   operator?: SimilarityOperatorType;
@@ -24,7 +25,7 @@ interface VectorSearchOptions {
  */
 export async function findSimilarDocuments(
   embedding: number[],
-  options: VectorSearchOptions = {}
+  options: VectorSearchOptions = {},
 ) {
   const {
     operator = SimilarityOperator.Cosine,
@@ -35,7 +36,7 @@ export async function findSimilarDocuments(
 
   // Convert embedding to Postgres vector format
   const vectorQuery = sql`${sql.raw(`'[${embedding.join(",")}]'::vector`)}`;
-  
+
   // Build where conditions
   const conditions = [
     sql`embedding ${sql.raw(operator)} ${vectorQuery} < ${1 - threshold}`,
@@ -53,7 +54,9 @@ export async function findSimilarDocuments(
       metadata: true,
     },
     extras: {
-      similarity: sql`1 - (embedding ${sql.raw(operator)} ${vectorQuery})`.as('similarity'),
+      similarity: sql`1 - (embedding ${sql.raw(operator)} ${vectorQuery})`.as(
+        "similarity",
+      ),
     },
     where: and(...conditions),
     orderBy: sql`embedding ${sql.raw(operator)} ${vectorQuery}`,
@@ -72,7 +75,7 @@ export async function matchDocuments(
   }: {
     limit?: number;
     filterMetadata?: Record<string, any>;
-  } = {}
+  } = {},
 ) {
   return await db.execute<{
     id: number;
@@ -98,12 +101,12 @@ export async function hybridSearch(
     operator = SimilarityOperator.Cosine,
     limit = 5,
     threshold = 0.8,
-    weightVector = 0.7,  // Weight for vector similarity (0-1)
-    weightText = 0.3     // Weight for text similarity (0-1)
-  } = {}
+    weightVector = 0.7, // Weight for vector similarity (0-1)
+    weightText = 0.3, // Weight for text similarity (0-1)
+  } = {},
 ) {
   const vectorQuery = sql`${sql.raw(`'[${embedding.join(",")}]'::vector`)}`;
-  
+
   return await db.execute<{
     id: number;
     content: string;
@@ -149,7 +152,7 @@ export async function getRecommendations(
     operator = SimilarityOperator.Cosine,
     limit = 5,
     threshold = 0.8,
-  }: VectorSearchOptions = {}
+  }: VectorSearchOptions = {},
 ) {
   if (documentIds.length === 0) {
     return [];
@@ -188,4 +191,4 @@ export async function getRecommendations(
     ORDER BY similarity DESC
     LIMIT ${limit};
   `);
-} 
+}

@@ -1,5 +1,14 @@
-import { pgTable, uuid, text, timestamp, jsonb, bigint, varchar, bigserial } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import {
+  bigint,
+  bigserial,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { vector } from "./vector";
 
 // Users table
@@ -7,8 +16,12 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
   username: text("username").unique(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
   profileImageUrl: text("profile_image_url"),
 });
 
@@ -18,7 +31,9 @@ export const content = pgTable("content", {
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   body: text("body").notNull(),
-  status: text("status", { enum: ["draft", "published", "archived"] }).default("draft"),
+  status: text("status", { enum: ["draft", "published", "archived"] }).default(
+    "draft",
+  ),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
@@ -26,7 +41,9 @@ export const content = pgTable("content", {
 // Metadata table
 export const metadata = pgTable("metadata", {
   id: uuid("id").primaryKey().defaultRandom(),
-  contentId: uuid("content_id").references(() => content.id, { onDelete: "cascade" }),
+  contentId: uuid("content_id").references(() => content.id, {
+    onDelete: "cascade",
+  }),
   key: text("key").notNull(),
   value: text("value").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -100,5 +117,5 @@ export const rls = {
     ALTER TABLE users ENABLE ROW LEVEL SECURITY;
     CREATE POLICY "Users can read own data" ON users
       FOR SELECT USING (auth.uid() = id);
-  `
-}; 
+  `,
+};

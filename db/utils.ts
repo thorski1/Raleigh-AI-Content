@@ -1,7 +1,7 @@
+import { eq } from "drizzle-orm";
+import { generateEmbedding, prepareForEmbedding } from "../lib/embeddings";
 import { db } from "./index";
 import { documents } from "./schema";
-import { generateEmbedding, prepareForEmbedding } from "../lib/embeddings";
-import { eq } from "drizzle-orm";
 
 export async function createDocument({
   title,
@@ -12,13 +12,18 @@ export async function createDocument({
   content: string;
   metadata?: Record<string, any>;
 }) {
-  const embedding = await generateEmbedding(prepareForEmbedding({ title, content }));
-  
-  return await db.insert(documents).values({
-    content,
-    metadata,
-    embedding,
-  }).returning();
+  const embedding = await generateEmbedding(
+    prepareForEmbedding({ title, content }),
+  );
+
+  return await db
+    .insert(documents)
+    .values({
+      content,
+      metadata,
+      embedding,
+    })
+    .returning();
 }
 
 export async function updateDocument({
@@ -31,7 +36,7 @@ export async function updateDocument({
   metadata?: Record<string, any>;
 }) {
   const updates: Partial<typeof documents.$inferInsert> = {};
-  
+
   if (content) {
     updates.content = content;
     updates.embedding = await generateEmbedding(content);
@@ -39,7 +44,7 @@ export async function updateDocument({
   if (metadata) {
     updates.metadata = metadata;
   }
-  
+
   return await db
     .update(documents)
     .set(updates)
@@ -48,8 +53,5 @@ export async function updateDocument({
 }
 
 export async function deleteDocument(id: number) {
-  return await db
-    .delete(documents)
-    .where(eq(documents.id, id))
-    .returning();
-} 
+  return await db.delete(documents).where(eq(documents.id, id)).returning();
+}
