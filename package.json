@@ -12,7 +12,15 @@
     "biome:format": "biome format . --write",
     "prepare": "husky install",
     "type-check": "tsc --noEmit",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "echo \"No tests specified\" && exit 0",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push:pg",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "tsx db/migrate.ts",
+    "supabase:link": "supabase link --project-ref your-project-ref",
+    "supabase:pull": "supabase db pull",
+    "supabase:push": "supabase db push",
+    "test:vector": "tsx scripts/test-vector.ts"
   },
   "engines": {
     "node": ">=18"
