@@ -48,10 +48,10 @@ export async function updateDocument({
   return await db
     .update(documents)
     .set(updates)
-    .where(eq(documents.id, id))
+    .where(eq(documents.id, BigInt(id)))
     .returning();
 }
 
 export async function deleteDocument(id: number) {
-  return await db.delete(documents).where(eq(documents.id, id)).returning();
+  return await db.delete(documents).where(eq(documents.id, BigInt(id))).returning();
 }
