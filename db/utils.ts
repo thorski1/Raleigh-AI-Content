@@ -53,5 +53,8 @@ export async function updateDocument({
 }
 
 export async function deleteDocument(id: number) {
-  return await db.delete(documents).where(eq(documents.id, BigInt(id))).returning();
+  return await db
+    .delete(documents)
+    .where(eq(documents.id, BigInt(id)))
+    .returning();
 }

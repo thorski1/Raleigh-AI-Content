@@ -1,26 +1,26 @@
+import { sql } from "drizzle-orm";
 import {
-  pgTable,
-  pgSchema,
-  unique,
+  bigint,
+  bigserial,
+  boolean,
+  customType,
+  foreignKey,
+  inet,
+  integer,
+  json,
+  jsonb,
   pgEnum,
+  pgSchema,
+  pgTable,
+  serial,
+  smallint,
+  text,
+  timestamp,
+  unique,
   uuid,
   varchar,
-  timestamp,
-  jsonb,
-  boolean,
-  text,
-  smallint,
-  foreignKey,
-  bigserial,
-  json,
-  customType,
-  inet,
-  serial,
-  bigint,
   vector,
-  integer,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
 export const auth = pgSchema("auth");
 export const drizzle = pgSchema("drizzle");
@@ -173,13 +173,9 @@ export const usersInAuth = auth.table(
       withTimezone: true,
       mode: "string",
     }),
-    isSsoUser: boolean("is_sso_user")
-      .default(sql`false`)
-      .notNull(),
+    isSsoUser: boolean("is_sso_user").default(sql`false`).notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true, mode: "string" }),
-    isAnonymous: boolean("is_anonymous")
-      .default(sql`false`)
-      .notNull(),
+    isAnonymous: boolean("is_anonymous").default(sql`false`).notNull(),
   },
   (table) => {
     return {
@@ -670,9 +666,7 @@ export const s3MultipartUploadsPartsInStorage = storage.table(
       .references(() => s3MultipartUploadsInStorage.id, {
         onDelete: "cascade",
       }),
-    size: bigint("size", { mode: "number" })
-      .default(sql`0`)
-      .notNull(),
+    size: bigint("size", { mode: "number" }).default(sql`0`).notNull(),
     partNumber: integer("part_number").notNull(),
     bucketId: text("bucket_id")
       .notNull()
@@ -707,9 +701,7 @@ export const seedFilesInSupabaseMigrations = supabaseMigrations.table(
 export const secretsInVault = vault.table("secrets", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   name: text("name"),
-  description: text("description")
-    .default(sql`''`)
-    .notNull(),
+  description: text("description").default(sql`''`).notNull(),
   secret: text("secret").notNull(),
   keyId: uuid("key_id")
     .default(sql`(pgsodium.create_key()).id`)
