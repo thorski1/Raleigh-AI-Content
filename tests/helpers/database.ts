@@ -4,10 +4,10 @@
  * @module database
  */
 
+import * as schema from "@/db/schema";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import * as schema from "@/db/schema";
 
 /**
  * Debug logger factory to create consistent logging contexts

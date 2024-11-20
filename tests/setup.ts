@@ -6,10 +6,10 @@
  * @requires @testing-library/jest-dom
  */
 
-import { expect, afterEach, afterAll } from 'vitest';
-import { cleanup } from '@testing-library/react';
-import * as matchers from '@testing-library/jest-dom/matchers';
-import { cleanupTestDatabase } from './helpers/database';
+import * as matchers from "@testing-library/jest-dom/matchers";
+import { cleanup } from "@testing-library/react";
+import { afterAll, afterEach, expect } from "vitest";
+import { cleanupTestDatabase } from "./helpers/database";
 
 /**
  * Testing Library DOM Matchers Extension
@@ -97,4 +97,4 @@ const DEFAULT_CONFIG: SetupConfig = {
 } as const;
 
 // Export for external configuration if needed
-export { DEFAULT_CONFIG }; 
+export { DEFAULT_CONFIG };

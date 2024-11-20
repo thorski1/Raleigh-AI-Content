@@ -4,8 +4,8 @@
  * @module setup-test-env
  */
 
-import { config } from 'dotenv';
-import path from 'path';
+import path from "path";
+import { config } from "dotenv";
 
 /**
  * Environment variable configuration
@@ -16,8 +16,8 @@ import path from 'path';
  * // DATABASE_URL=postgres://user:pass@localhost:5432/test_db
  * // DIRECT_URL=postgres://user:pass@localhost:5432/test_db
  */
-config({ 
-  path: path.resolve(__dirname, '../../.env.test') 
+config({
+  path: path.resolve(__dirname, "../../.env.test"),
 });
 
 /**
@@ -28,8 +28,8 @@ config({
  * @property {string} DIRECT_URL - Direct database connection string (bypassing pooling)
  */
 const requiredEnvVars = [
-  'DATABASE_URL', // Main connection string for the test database
-  'DIRECT_URL'    // Direct connection string (used for migrations)
+  "DATABASE_URL", // Main connection string for the test database
+  "DIRECT_URL", // Direct connection string (used for migrations)
 ] as const;
 
 /**
@@ -44,7 +44,7 @@ for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     throw new Error(`Missing required environment variable: ${envVar}
     Please ensure you have a .env.test file with all required variables.
-    Required variables: ${requiredEnvVars.join(', ')}`);
+    Required variables: ${requiredEnvVars.join(", ")}`);
   }
 }
 
@@ -56,14 +56,14 @@ for (const envVar of requiredEnvVars) {
  * // Proper test execution:
  * NODE_ENV=test vitest
  */
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   console.warn(`
     ⚠️  Warning: Environment is not set to test. Some tests may fail.
     Current NODE_ENV: ${process.env.NODE_ENV}
     Recommended: Set NODE_ENV=test before running tests
     Example: NODE_ENV=test vitest
   `);
-} 
+}
 
 /**
  * Type definition for supported environment variables
@@ -76,7 +76,7 @@ if (process.env.NODE_ENV !== 'test') {
 export type TestEnvVars = {
   DATABASE_URL: string;
   DIRECT_URL: string;
-  NODE_ENV: 'test';
+  NODE_ENV: "test";
 };
 
 /**
@@ -87,4 +87,4 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv extends TestEnvVars {}
   }
-} 
+}

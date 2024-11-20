@@ -5,35 +5,35 @@
  */
 
 import { randomUUID } from "crypto";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import * as schema from "@/db/schema";
 import { content, usersInAuth } from "@/db/schema";
 import type { InferInsertModel } from "drizzle-orm";
 import { sql } from "drizzle-orm";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 /**
  * Type Definitions for Database Operations
  */
 
-/** 
+/**
  * User insert model type
  * @typedef {InferInsertModel<typeof usersInAuth>} UserInsert
  */
 type UserInsert = InferInsertModel<typeof usersInAuth>;
 
-/** 
+/**
  * Content insert model type
  * @typedef {InferInsertModel<typeof content>} ContentInsert
  */
 type ContentInsert = InferInsertModel<typeof content>;
 
-/** 
+/**
  * Database type with schema
  * @typedef {PostgresJsDatabase<typeof schema>} Database
  */
 type Database = PostgresJsDatabase<typeof schema>;
 
-/** 
+/**
  * Database or transaction type
  * @typedef {Database | Parameters<Parameters<Database["transaction"]>[0]>[0]} DbOrTx
  */
@@ -54,7 +54,8 @@ type DbOrTx = Database | Parameters<Parameters<Database["transaction"]>[0]>[0];
 export async function createTestUser(db: DbOrTx) {
   const debug = {
     log: (...args: unknown[]) => console.log("[Test Fixtures]", ...args),
-    error: (...args: unknown[]) => console.error("[Test Fixtures Error]", ...args),
+    error: (...args: unknown[]) =>
+      console.error("[Test Fixtures Error]", ...args),
   };
 
   const userInsert: UserInsert = {
@@ -68,7 +69,7 @@ export async function createTestUser(db: DbOrTx) {
 
   try {
     debug.log("Creating user with data:", userInsert);
-    
+
     // Schema validation
     const schemaCheck = await db.execute(sql`SELECT current_schema()`);
     debug.log("Current schema:", schemaCheck);
@@ -87,11 +88,11 @@ export async function createTestUser(db: DbOrTx) {
       .insert(usersInAuth)
       .values(userInsert)
       .returning()
-      .then(res => {
+      .then((res) => {
         debug.log("User creation successful:", res);
         return res;
       })
-      .catch(err => {
+      .catch((err) => {
         debug.error("User creation failed:", err);
         throw err;
       });
@@ -125,7 +126,8 @@ export async function createTestUser(db: DbOrTx) {
 export async function createTestContent(db: DbOrTx, userId: string) {
   const debug = {
     log: (...args: unknown[]) => console.log("[Test Fixtures]", ...args),
-    error: (...args: unknown[]) => console.error("[Test Fixtures Error]", ...args),
+    error: (...args: unknown[]) =>
+      console.error("[Test Fixtures Error]", ...args),
   };
 
   const contentInsert: ContentInsert = {
@@ -140,21 +142,21 @@ export async function createTestContent(db: DbOrTx, userId: string) {
 
   try {
     debug.log("Creating content with data:", contentInsert);
-    
+
     // Transaction-safe content creation
     const result = await db.transaction(async (tx) => {
       // Set schema context
       await tx.execute(sql`SET search_path TO auth, public`);
-      
+
       // Verify user existence
       const [userExists] = await tx.execute(sql`
         SELECT EXISTS (
           SELECT 1 FROM auth.users WHERE id = ${userId}
         );
       `);
-      
+
       debug.log("User exists check (in transaction):", userExists);
-      
+
       if (!userExists.exists) {
         throw new Error(`User ${userId} does not exist`);
       }
@@ -173,9 +175,9 @@ export async function createTestContent(db: DbOrTx, userId: string) {
   } catch (error: unknown) {
     debug.error("Error creating test content:", error);
     // Deadlock retry logic
-    if ((error as { code?: string })?.code === '40P01') {
+    if ((error as { code?: string })?.code === "40P01") {
       debug.log("Deadlock detected, retrying content creation...");
-      await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
+      await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
       return createTestContent(db, userId);
     }
     throw error;

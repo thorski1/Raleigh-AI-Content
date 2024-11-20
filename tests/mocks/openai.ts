@@ -4,7 +4,7 @@
  * @module openai-mock
  */
 
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 /**
  * Mock OpenAI Client Configuration
@@ -23,8 +23,8 @@ export const mockOpenAI = {
      * @returns {Promise<{data: Array<{embedding: number[]}>}>}
      */
     create: vi.fn().mockResolvedValue({
-      data: [{ embedding: new Array(1536).fill(0) }]
-    })
+      data: [{ embedding: new Array(1536).fill(0) }],
+    }),
   },
   chat: {
     completions: {
@@ -34,12 +34,14 @@ export const mockOpenAI = {
        * @returns {Promise<{choices: Array<{message: {content: string}}>}>}
        */
       create: vi.fn().mockResolvedValue({
-        choices: [{
-          message: { content: 'Mock response' }
-        }]
-      })
-    }
-  }
+        choices: [
+          {
+            message: { content: "Mock response" },
+          },
+        ],
+      }),
+    },
+  },
 };
 
 /**
@@ -47,9 +49,9 @@ export const mockOpenAI = {
  * Automatically mocks the entire OpenAI module
  * @constant
  */
-vi.mock('openai', () => ({
+vi.mock("openai", () => ({
   default: vi.fn(() => mockOpenAI),
-  OpenAIApi: vi.fn(() => mockOpenAI)
+  OpenAIApi: vi.fn(() => mockOpenAI),
 }));
 
 /**
@@ -78,4 +80,4 @@ type ChatCompletionResponse = {
       content: string;
     };
   }>;
-}; 
+};

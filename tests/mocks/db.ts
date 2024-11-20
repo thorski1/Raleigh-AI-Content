@@ -4,7 +4,7 @@
  * @module database-mock
  */
 
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 /**
  * Mock Database Interface
@@ -75,9 +75,9 @@ export const mockDb: MockDb = {
  */
 export function resetMocks(): void {
   vi.clearAllMocks();
-  Object.values(mockDb).forEach(mock => {
-    if (typeof mock === 'function') {
+  Object.values(mockDb).forEach((mock) => {
+    if (typeof mock === "function") {
       (mock as ReturnType<typeof vi.fn>).mockClear();
     }
   });
-} 
+}

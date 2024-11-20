@@ -4,7 +4,7 @@
  * @module clerk-mock
  */
 
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 /**
  * Mock User Interface
@@ -39,7 +39,7 @@ let currentUser: MockUser | null = null;
  *   email: 'test@example.com',
  *   username: 'testuser'
  * });
- * 
+ *
  * // Clear mock user
  * mockClerkUser(null);
  */
@@ -57,7 +57,7 @@ export function mockClerkUser(user: MockUser | null) {
  * const session = await auth();
  * console.log(session.userId); // Returns current mock user ID
  */
-vi.mock('@clerk/nextjs/server', () => ({
+vi.mock("@clerk/nextjs/server", () => ({
   /**
    * Mock auth function
    * Simulates Clerk's auth() function for testing
@@ -122,4 +122,4 @@ type ClerkClientConfig = {
   users: {
     getUser: (id: string) => Promise<MockUser | null>;
   };
-}; 
+};

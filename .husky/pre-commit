@@ -8,4 +8,4 @@ pnpm run type-check
 pnpm run test:ci
 
 # Run Biome checks
-pnpm run biome
+pnpm run biome check --fix --unsafe

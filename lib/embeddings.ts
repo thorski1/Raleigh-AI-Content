@@ -1,12 +1,15 @@
-import { OpenAI } from 'openai';
+import { OpenAI } from "openai";
 
-export function prepareForEmbedding({ title, content }: { title: string; content: string }) {
+export function prepareForEmbedding({
+  title,
+  content,
+}: { title: string; content: string }) {
   return `${title}\n\n${content}`.trim();
 }
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true
+  dangerouslyAllowBrowser: true,
 });
 
 export async function generateEmbedding(text: string): Promise<number[]> {

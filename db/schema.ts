@@ -1,3 +1,4 @@
+import type { UserMetadata } from "@/types/auth";
 import { sql } from "drizzle-orm";
 import { relations } from "drizzle-orm";
 import {
@@ -22,7 +23,6 @@ import {
   varchar,
   vector,
 } from "drizzle-orm/pg-core";
-import type { UserMetadata } from "@/types/auth";
 
 export const auth = pgSchema("auth");
 export const drizzle = pgSchema("drizzle");
@@ -577,9 +577,7 @@ export const s3MultipartUploadsPartsInStorage = storage.table(
       .references(() => s3MultipartUploadsInStorage.id, {
         onDelete: "cascade",
       }),
-    size: bigint("size", { mode: "number" })
-      .default(sql`0`)
-      .notNull(),
+    size: bigint("size", { mode: "number" }).default(sql`0`).notNull(),
     partNumber: integer("part_number").notNull(),
     bucketId: text("bucket_id")
       .notNull()
@@ -614,9 +612,7 @@ export const seedFilesInSupabaseMigrations = supabaseMigrations.table(
 export const secretsInVault = vault.table("secrets", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   name: text("name"),
-  description: text("description")
-    .default(sql`''`)
-    .notNull(),
+  description: text("description").default(sql`''`).notNull(),
   secret: text("secret").notNull(),
   keyId: uuid("key_id")
     .default(sql`(pgsodium.create_key()).id`)

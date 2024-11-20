@@ -4,12 +4,12 @@
  * @module auth.test
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { sql } from "drizzle-orm";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createTestDatabase } from "../helpers/database";
 import { mockClerkUser } from "../mocks/clerk";
 import { createTestUser } from "../utils/fixtures";
-import { createTestDatabase } from "../helpers/database";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { sql } from "drizzle-orm";
 
 /**
  * Mock configuration for Clerk authentication
@@ -35,13 +35,13 @@ describe("Authentication Flow", () => {
    * @type {PostgresJsDatabase}
    */
   let db: PostgresJsDatabase<typeof import("@/db/schema")>;
-  
+
   /**
    * Cleanup function for test data
    * @type {() => Promise<void>}
    */
   let cleanupFn: () => Promise<void>;
-  
+
   /**
    * Unique identifier for each test run
    * @type {string}
@@ -113,7 +113,7 @@ describe("Authentication Flow", () => {
     const result = await db.execute(sql`
       SELECT current_user, current_database()
     `);
-    
+
     // Verify we're connected to the test database
     expect(result[0].current_database).toBe("test_db");
   }, 30000);

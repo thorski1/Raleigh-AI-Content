@@ -4,14 +4,14 @@
  * @module documents.test
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { createTestDatabase } from "../helpers/database";
-import { createDocument } from "@/db/utils";
 import { findSimilarDocuments } from "@/db/queries";
-import { createTestDocument } from "../utils/fixtures";
 import { documents, usersInAuth } from "@/db/schema";
+import { createDocument } from "@/db/utils";
 import { sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createTestDatabase } from "../helpers/database";
+import { createTestDocument } from "../utils/fixtures";
 
 /**
  * Debug utility for document test logging
@@ -21,7 +21,8 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 const debug = {
   enabled: true,
   log: (...args: unknown[]) => console.log("[Documents Test]", ...args),
-  error: (...args: unknown[]) => console.error("[Documents Test Error]", ...args),
+  error: (...args: unknown[]) =>
+    console.error("[Documents Test Error]", ...args),
 };
 
 /**
@@ -47,13 +48,13 @@ describe("Document Operations", () => {
    * @type {PostgresJsDatabase}
    */
   let db: PostgresJsDatabase<typeof import("@/db/schema")>;
-  
+
   /**
    * Cleanup function for test data
    * @type {() => Promise<void>}
    */
   let cleanupFn: () => Promise<void>;
-  
+
   /**
    * Unique identifier for each test run
    * @type {string}
@@ -139,24 +140,26 @@ describe("Document Operations", () => {
    * @async
    * @example
    * // Vector similarity query structure:
-   * SELECT id, content 
-   * FROM test.documents 
+   * SELECT id, content
+   * FROM test.documents
    * ORDER BY embedding <-> [vector] LIMIT 1
    */
   it("should find similar documents using vector search", async () => {
     debug.log("Starting vector similarity test...");
-    
+
     try {
       // Insert first test document
       debug.log("Attempting to insert first document...");
-      const doc1 = await db.insert(documents)
+      const doc1 = await db
+        .insert(documents)
         .values(createTestDocument())
         .returning();
       debug.log("First document inserted:", doc1[0].id);
 
       // Insert second test document
       debug.log("Attempting to insert second document...");
-      const doc2 = await db.insert(documents)
+      const doc2 = await db
+        .insert(documents)
         .values(createTestDocument())
         .returning();
       debug.log("Second document inserted:", doc2[0].id);
@@ -171,19 +174,18 @@ describe("Document Operations", () => {
 
       debug.log("Starting vector similarity query...");
       debug.log("Embedding length:", firstEmbedding.length);
-      
+
       // Execute vector similarity search with null-checked embedding
       const result = await db.execute(sql`
         SELECT id, content 
         FROM test.documents 
         WHERE embedding IS NOT NULL
-        ORDER BY embedding <-> ${`[${firstEmbedding.join(',')}]`}::vector(1536)
+        ORDER BY embedding <-> ${`[${firstEmbedding.join(",")}]`}::vector(1536)
         LIMIT 1
       `);
 
       debug.log("Query completed, result:", result);
       expect(result[0]).toBeDefined();
-      
     } catch (error: unknown) {
       debug.error("Test failed with error:", error);
       debug.error("Error stack:", (error as Error).stack);
