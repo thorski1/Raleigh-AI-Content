@@ -9,6 +9,9 @@ const runMigrations = async () => {
   // Disable prefetch as it is not supported for "Transaction" pool mode
   const migrationClient = postgres(process.env.DATABASE_URL!, {
     prepare: false,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   });
   const db = drizzle(migrationClient);
 

@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   bigint,
   bigserial,
@@ -21,6 +22,7 @@ import {
   varchar,
   vector,
 } from "drizzle-orm/pg-core";
+import type { UserMetadata } from "@/types/auth";
 
 export const auth = pgSchema("auth");
 export const drizzle = pgSchema("drizzle");
@@ -98,91 +100,20 @@ export const actionInRealtime = realtime.enum("action", [
   "ERROR",
 ]);
 
-export const usersInAuth = auth.table(
-  "users",
-  {
-    instanceId: uuid("instance_id"),
-    id: uuid("id").primaryKey().notNull(),
-    aud: varchar("aud", { length: 255 }),
-    role: varchar("role", { length: 255 }),
-    email: varchar("email", { length: 255 }),
-    encryptedPassword: varchar("encrypted_password", { length: 255 }),
-    emailConfirmedAt: timestamp("email_confirmed_at", {
-      withTimezone: true,
-      mode: "string",
-    }),
-    invitedAt: timestamp("invited_at", { withTimezone: true, mode: "string" }),
-    confirmationToken: varchar("confirmation_token", { length: 255 }),
-    confirmationSentAt: timestamp("confirmation_sent_at", {
-      withTimezone: true,
-      mode: "string",
-    }),
-    recoveryToken: varchar("recovery_token", { length: 255 }),
-    recoverySentAt: timestamp("recovery_sent_at", {
-      withTimezone: true,
-      mode: "string",
-    }),
-    emailChangeTokenNew: varchar("email_change_token_new", { length: 255 }),
-    emailChange: varchar("email_change", { length: 255 }),
-    emailChangeSentAt: timestamp("email_change_sent_at", {
-      withTimezone: true,
-      mode: "string",
-    }),
-    lastSignInAt: timestamp("last_sign_in_at", {
-      withTimezone: true,
-      mode: "string",
-    }),
-    rawAppMetaData: jsonb("raw_app_meta_data"),
-    rawUserMetaData: jsonb("raw_user_meta_data"),
-    isSuperAdmin: boolean("is_super_admin"),
-    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }),
-    updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" }),
-    phone: text("phone").default(sql`NULL::character varying`),
-    phoneConfirmedAt: timestamp("phone_confirmed_at", {
-      withTimezone: true,
-      mode: "string",
-    }),
-    phoneChange: text("phone_change").default(sql`''::character varying`),
-    phoneChangeToken: varchar("phone_change_token", { length: 255 }).default(
-      sql`''::character varying`,
-    ),
-    phoneChangeSentAt: timestamp("phone_change_sent_at", {
-      withTimezone: true,
-      mode: "string",
-    }),
-    confirmedAt: timestamp("confirmed_at", {
-      withTimezone: true,
-      mode: "string",
-    })
-      .default(sql`LEAST(email_confirmed_at, phone_confirmed_at)`)
-      .generatedAlwaysAs(sql`LEAST(email_confirmed_at, phone_confirmed_at)`),
-    emailChangeTokenCurrent: varchar("email_change_token_current", {
-      length: 255,
-    }).default(sql`''::character varying`),
-    emailChangeConfirmStatus: smallint("email_change_confirm_status").default(
-      sql`0`,
-    ),
-    bannedUntil: timestamp("banned_until", {
-      withTimezone: true,
-      mode: "string",
-    }),
-    reauthenticationToken: varchar("reauthentication_token", {
-      length: 255,
-    }).default(sql`''::character varying`),
-    reauthenticationSentAt: timestamp("reauthentication_sent_at", {
-      withTimezone: true,
-      mode: "string",
-    }),
-    isSsoUser: boolean("is_sso_user").default(sql`false`).notNull(),
-    deletedAt: timestamp("deleted_at", { withTimezone: true, mode: "string" }),
-    isAnonymous: boolean("is_anonymous").default(sql`false`).notNull(),
-  },
-  (table) => {
-    return {
-      usersPhoneKey: unique("users_phone_key").on(table.phone),
-    };
-  },
-);
+export const usersInAuth = auth.table("users", {
+  id: uuid("id").primaryKey().notNull(),
+  email: text("email").notNull(),
+  username: text("username"),
+  createdAt: timestamp("created_at", {
+    withTimezone: true,
+    mode: "string",
+  }).notNull(),
+  updatedAt: timestamp("updated_at", {
+    withTimezone: true,
+    mode: "string",
+  }).notNull(),
+  profileImageUrl: text("profile_image_url"),
+});
 
 export const refreshTokensInAuth = auth.table(
   "refresh_tokens",
@@ -494,31 +425,11 @@ export const documents = pgTable("documents", {
   embedding: vector("embedding", { dimensions: 1536 }),
 });
 
-export const users = pgTable(
-  "users",
-  {
-    id: uuid("id").defaultRandom().primaryKey().notNull(),
-    email: text("email").notNull(),
-    username: text("username"),
-    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" })
-      .defaultNow()
-      .notNull(),
-    profileImageUrl: text("profile_image_url"),
-  },
-  (table) => {
-    return {
-      usersEmailUnique: unique("users_email_unique").on(table.email),
-      usersUsernameUnique: unique("users_username_unique").on(table.username),
-    };
-  },
-);
-
-export const content = pgTable("content", {
-  id: uuid("id").defaultRandom().primaryKey().notNull(),
-  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+export const content = auth.table("content", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => usersInAuth.id, {
+    onDelete: "cascade",
+  }),
   title: text("title").notNull(),
   body: text("body").notNull(),
   createdAt: timestamp("created_at", {
@@ -666,7 +577,9 @@ export const s3MultipartUploadsPartsInStorage = storage.table(
       .references(() => s3MultipartUploadsInStorage.id, {
         onDelete: "cascade",
       }),
-    size: bigint("size", { mode: "number" }).default(sql`0`).notNull(),
+    size: bigint("size", { mode: "number" })
+      .default(sql`0`)
+      .notNull(),
     partNumber: integer("part_number").notNull(),
     bucketId: text("bucket_id")
       .notNull()
@@ -701,7 +614,9 @@ export const seedFilesInSupabaseMigrations = supabaseMigrations.table(
 export const secretsInVault = vault.table("secrets", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   name: text("name"),
-  description: text("description").default(sql`''`).notNull(),
+  description: text("description")
+    .default(sql`''`)
+    .notNull(),
   secret: text("secret").notNull(),
   keyId: uuid("key_id")
     .default(sql`(pgsodium.create_key()).id`)
@@ -714,3 +629,14 @@ export const secretsInVault = vault.table("secrets", {
     .defaultNow()
     .notNull(),
 });
+
+export const contentRelations = relations(content, ({ one }) => ({
+  user: one(usersInAuth, {
+    fields: [content.userId],
+    references: [usersInAuth.id],
+  }),
+}));
+
+export const userRelations = relations(usersInAuth, ({ many }) => ({
+  contents: many(content),
+}));
