@@ -1,8 +1,11 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
 
-# Add common.sh for Windows compatibility
-. "$(dirname -- "$0")/common.sh"
+# Run type checking
+pnpm run type-check
 
-# Run Biome check with write instead of apply
-npx @biomejs/biome check --write .
+# Run tests
+pnpm run test:ci
+
+# Run Biome checks
+pnpm run biome check --fix --unsafe

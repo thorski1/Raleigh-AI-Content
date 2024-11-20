@@ -2,6 +2,8 @@
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/langchain-ai/langchain-nextjs-template)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flangchain-ai%2Flangchain-nextjs-template)
+[![Test Suite](https://github.com/langchain-ai/langchain-nextjs-template/actions/workflows/test.yml/badge.svg)](https://github.com/langchain-ai/langchain-nextjs-template/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/langchain-ai/langchain-nextjs-template/branch/main/graph/badge.svg)](https://codecov.io/gh/langchain-ai/langchain-nextjs-template)
 
 This template scaffolds a LangChain.js + Next.js starter app. It showcases how to use and combine LangChain modules for several
 use cases. Specifically:
@@ -31,12 +33,16 @@ To start with the basic examples, you'll just need to add your OpenAI API key.
 
 Because this app is made to run in serverless Edge functions, make sure you've set the `LANGCHAIN_CALLBACKS_BACKGROUND` environment variable to `false` to ensure tracing finishes if you are using [LangSmith tracing](https://docs.smith.langchain.com/).
 
-Next, install the required packages using your preferred package manager (e.g. `yarn`).
+Next, install the required packages using pnpm:
+
+```bash
+pnpm install
+```
 
 Now you're ready to run the development server:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result! Ask the bot something and you'll see a streamed response:
@@ -126,6 +132,29 @@ To learn more about what you can do with LangChain.js, check out the docs here:
 When ready, you can deploy your app on the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
 Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## 🧪 Testing
+
+This project uses Vitest for testing. To run the tests:
+
+```bash
+# Run tests in watch mode
+pnpm test
+
+# Run tests with coverage
+pnpm test:coverage
+
+# Run tests once (CI mode)
+pnpm test:ci
+```
+
+The project includes:
+- Unit tests for utilities and helpers
+- Integration tests for database operations
+- Mock implementations for external services
+- Automated test runs via GitHub Actions
+
+You can view the test coverage report at [Codecov](https://codecov.io/gh/langchain-ai/langchain-nextjs-template).
 
 ## Thank You!
 
